@@ -4,11 +4,9 @@ require('dotenv').config();
 const app= express();
 const  { PORT } = process.env;
 
-// for swagger documentation
+const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const YAML = require('yamljs');
-const swaggerDocument = YAML.load('./swagger.yaml');
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+const swaggerJSDoc = require('swagger-jsdoc');
 
 
 
@@ -17,7 +15,26 @@ connectWithDb();
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
+//use swagger
+const options = {
+    defination:{
+        openapi: '3.0.0',
+        info: {
+            title: 'Polling system api',
+            version: '1.0.0'
 
+        },
+        servers: [
+            {
+                api: 'http://localhost:8000/'
+            }
+        ]
+    },
+    apis : ['./index.js']
+}
+
+const swaggerSpec = swaggerJSDoc(options)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 
